@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
 import ItemList from "./ItemList";
-const Content = ({ items, setItems, handleCheck, handleDelete }) => {
+const Content = ({ items, handleCheck, handleDelete }) => {
   // name is a current state, setName is stat we set, we use const because we never modify name, we use state to do it later in code!!
   // const [name, setName] = useState("kris"); //default name
   // const [count, setCount] = useState(0);

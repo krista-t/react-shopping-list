@@ -1,6 +1,6 @@
 import { FaTrashAlt } from "react-icons/fa";
 const LineItem = ({ item, handleCheck, handleDelete }) => (
-  <li className="item" key={item.id}>
+  <li className="item">
     <input
       type="checkbox"
       //listen to change and call function-we have to pass call into anonymous function

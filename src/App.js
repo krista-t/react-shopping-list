@@ -1,4 +1,5 @@
 import Header from "./Header";
+import AddItem from "./Additem";
 import Content from "./Content";
 import Footer from "./Footer";
 import { useState } from "react";
@@ -7,12 +8,31 @@ import { useState } from "react";
 //pass props down to every child element
 function App() {
   //DEFAULT STATE CAN BE STRING or ARRAY
-  const [items, setItems] = useState([
-    { id: 1, checked: true, item: "almonds" },
+  const [items, setItems] = useState(
+    //   [
+    //   { id: 1, checked: true, item: "almonds" },
+    //   { id: 2, checked: false, item: "peanuts" },
+    //   { id: 3, checked: false, item: "cashews" },
+    // ]
+    JSON.parse(localStorage.getItem("shoppingList"))
+  );
 
-    { id: 2, checked: false, item: "peanuts" },
-    { id: 3, checked: false, item: "cashews" },
-  ]);
+  //set state for form input
+  const [newItem, setNewItem] = useState(" ");
+  const setAndSaveItems = (newItems) => {
+    setItems(newItems);
+    localStorage.setItem("shoppingList", JSON.stringify(newItems));
+  };
+  //additem function
+  const addItem = (item) => {
+    //set id by looking at the last item in arr(-1),add one to id,
+    //otherwise leave id to be one if there is no items to add
+    const id = items.length ? items[items.length - 1].id + 1 : 1;
+    const myNewItem = { id, checked: false, item };
+    const listItems = [...items, myNewItem];
+    setAndSaveItems(listItems);
+  };
+
   const handleCheck = (id) => {
     //check if item.id  is not checked and copy array of unchecked items, else retun items
     const listItems = items.map((item) =>
@@ -23,23 +43,34 @@ function App() {
           }
         : item
     );
+
     //set state
-    setItems(listItems);
-    //use LS so list stays same after reload
-    localStorage.setItem("shoppingList", JSON.stringify(listItems));
+    setAndSaveItems(listItems);
   };
 
   const handleDelete = (id) => {
     const listItems = items.filter((item) => item.id !== id);
     //set state
-    setItems(listItems);
-    //use LS so list stays same after reload
-    localStorage.setItem("shoppingList", JSON.stringify(listItems));
+    setAndSaveItems(listItems);
+  };
+  //on submit item through form
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //if field is empty  exit this function
+    if (!newItem) return;
+    console.log(newItem);
+    //addItem
+    addItem(newItem);
+    setNewItem("");
   };
   return (
     <div className="App">
-      <Header title="Groceries" />
-
+      <Header title="Shopping List" />
+      <AddItem
+        newItem={newItem}
+        setNewItem={setNewItem}
+        handleSubmit={handleSubmit}
+      />
       <Content
         items={items}
         setItems={setItems}
