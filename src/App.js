@@ -1,4 +1,5 @@
 import Header from "./Header";
+import SearchItem from "./SearchItem";
 import AddItem from "./Additem";
 import Content from "./Content";
 import Footer from "./Footer";
@@ -9,16 +10,13 @@ import { useState } from "react";
 function App() {
   //DEFAULT STATE CAN BE STRING or ARRAY
   const [items, setItems] = useState(
-    //   [
-    //   { id: 1, checked: true, item: "almonds" },
-    //   { id: 2, checked: false, item: "peanuts" },
-    //   { id: 3, checked: false, item: "cashews" },
-    // ]
     JSON.parse(localStorage.getItem("shoppingList"))
   );
 
   //set state for form input
   const [newItem, setNewItem] = useState(" ");
+  //set state for search
+  const [search, setSearch] = useState(" ");
   const setAndSaveItems = (newItems) => {
     setItems(newItems);
     localStorage.setItem("shoppingList", JSON.stringify(newItems));
@@ -66,13 +64,17 @@ function App() {
   return (
     <div className="App">
       <Header title="Shopping List" />
+
       <AddItem
         newItem={newItem}
         setNewItem={setNewItem}
         handleSubmit={handleSubmit}
       />
+      <SearchItem search={search} setSearch={setSearch} />
       <Content
-        items={items}
+        items={items.filter((item) =>
+          item.item.toLowerCase().includes(search.toLowerCase())
+        )}
         setItems={setItems}
         handleCheck={handleCheck}
         handleDelete={handleDelete}
