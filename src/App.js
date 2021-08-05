@@ -63,6 +63,7 @@ function App() {
   };
   return (
     <div className="App">
+      {/* <div className = "title">Shopping List</div> */}
       <Header title="Shopping List" />
 
       <AddItem
