@@ -3,24 +3,28 @@ import SearchItem from "./SearchItem";
 import AddItem from "./Additem";
 import Content from "./Content";
 import Footer from "./Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 //app is the parent element and from there we can
 //pass props down to every child element
 function App() {
   //DEFAULT STATE CAN BE STRING or ARRAY
   const [items, setItems] = useState(
-    JSON.parse(localStorage.getItem("shoppingList"))
+    JSON.parse(localStorage.getItem("shoppinglist")) || []
   );
 
   //set state for form input
   const [newItem, setNewItem] = useState(" ");
   //set state for search
   const [search, setSearch] = useState(" ");
-  const setAndSaveItems = (newItems) => {
-    setItems(newItems);
-    localStorage.setItem("shoppingList", JSON.stringify(newItems));
-  };
+
+  console.log("before useEffect");
+
+  useEffect(() => {
+    localStorage.setItem("shoppinglist", JSON.stringify(items));
+  }, [items]);
+  console.log("after useEffect");
+
   //additem function
   const addItem = (item) => {
     //set id by looking at the last item in arr(-1),add one to id,
@@ -28,7 +32,7 @@ function App() {
     const id = items.length ? items[items.length - 1].id + 1 : 1;
     const myNewItem = { id, checked: false, item };
     const listItems = [...items, myNewItem];
-    setAndSaveItems(listItems);
+    setItems(listItems);
   };
 
   const handleCheck = (id) => {
@@ -43,13 +47,13 @@ function App() {
     );
 
     //set state
-    setAndSaveItems(listItems);
+    setItems(listItems);
   };
 
   const handleDelete = (id) => {
     const listItems = items.filter((item) => item.id !== id);
     //set state
-    setAndSaveItems(listItems);
+    setItems(listItems);
   };
   //on submit item through form
   const handleSubmit = (e) => {
@@ -76,7 +80,7 @@ function App() {
         items={items.filter((item) =>
           item.item.toLowerCase().includes(search.toLowerCase())
         )}
-        setItems={setItems}
+        // setItems={setItems}
         handleCheck={handleCheck}
         handleDelete={handleDelete}
       />
