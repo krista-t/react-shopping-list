@@ -8,25 +8,47 @@ import { useState, useEffect } from "react";
 //app is the parent element and from there we can
 //pass props down to every child element
 function App() {
+  const API_URL = "http://localhost:3500/items";
   //DEFAULT STATE CAN BE STRING or ARRAY
-  const [items, setItems] = useState(
-    JSON.parse(localStorage.getItem("shoppinglist")) || []
-  );
+  // const [items, setItems] = useState(
+  //   JSON.parse(localStorage.getItem("shoppinglist")) || []
+  // );
+  const [items, setItems] = useState([]);
 
   //set state for form input
   const [newItem, setNewItem] = useState(" ");
   //set state for search
   const [search, setSearch] = useState(" ");
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  console.log("before useEffect");
+  console.log(items);
 
+  // useEffect(() => {
+  //   localStorage.setItem("shoppinglist", JSON.stringify(items));
+  // }, [items]);
+  // console.log("after useEffect");
   useEffect(() => {
-    localStorage.setItem("shoppinglist", JSON.stringify(items));
-  }, [items]);
-  console.log("after useEffect");
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw Error("Did not received expected data");
+
+        const listItems = await response.json();
+        setItems(listItems);
+        setFetchError(null);
+      } catch (err) {
+        console.log(err);
+        setFetchError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    setTimeout(() => fetchItems(), 2000);
+  }, []);
 
   //additem function
-  const addItem = (item) => {
+  const addItem = async (item) => {
     //set id by looking at the last item in arr(-1),add one to id,
     //otherwise leave id to be one if there is no items to add
     const id = items.length ? items[items.length - 1].id + 1 : 1;
@@ -35,7 +57,7 @@ function App() {
     setItems(listItems);
   };
 
-  const handleCheck = (id) => {
+  const handleCheck = async (id) => {
     //check if item.id  is not checked and copy array of unchecked items, else retun items
     const listItems = items.map((item) =>
       item.id === id
@@ -76,14 +98,20 @@ function App() {
         handleSubmit={handleSubmit}
       />
       <SearchItem search={search} setSearch={setSearch} />
-      <Content
-        items={items.filter((item) =>
-          item.item.toLowerCase().includes(search.toLowerCase())
+      <main>
+        {isLoading && <p>Loading Items...</p>}
+        {fetchError && <p style={{ color: "red" }}>{`Error: ${fetchError}`}</p>}
+        {!fetchError && !isLoading && (
+          <Content
+            // items={items.filter((item) =>
+            //   item.item.toLowerCase().includes(search.toLowerCase())
+            // )}
+            items={items}
+            handleCheck={handleCheck}
+            handleDelete={handleDelete}
+          />
         )}
-        // setItems={setItems}
-        handleCheck={handleCheck}
-        handleDelete={handleDelete}
-      />
+      </main>
       <Footer length={items.length} />
     </div>
   );

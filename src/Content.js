@@ -19,9 +19,10 @@ const Content = ({ items, handleCheck, handleDelete }) => {
   //   console.log(e.target);
   // };
   return (
-    <main>
-      {/* CHECK EVENT ON p!! */}
-      {/* <p onDoubleClick={handleClick}>Hello {name}</p>
+    <>
+      <main>
+        {/* CHECK EVENT ON p!! */}
+        {/* <p onDoubleClick={handleClick}>Hello {name}</p>
       <button onClick={handleNameChange}>Change Name</button>
       <button
         onClick={() => {
@@ -37,16 +38,17 @@ const Content = ({ items, handleCheck, handleDelete }) => {
       >
         Click it
       </button> */}
-      {items.length ? (
-        <ItemList
-          items={items}
-          handleCheck={handleCheck}
-          handleDelete={handleDelete}
-        />
-      ) : (
-        <p style={{ marginTop: "2rem" }}>Your list is empty</p>
-      )}
-    </main>
+        {items.length ? (
+          <ItemList
+            items={items}
+            handleCheck={handleCheck}
+            handleDelete={handleDelete}
+          />
+        ) : (
+          <p style={{ marginTop: "2rem" }}>Your list is empty</p>
+        )}
+      </main>
+    </>
   );
 };
 
