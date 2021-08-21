@@ -4,6 +4,7 @@ import AddItem from "./Additem";
 import Content from "./Content";
 import Footer from "./Footer";
 import { useState, useEffect } from "react";
+import apiRequest from "./apiRequest";
 
 //app is the parent element and from there we can
 //pass props down to every child element
@@ -21,8 +22,6 @@ function App() {
   const [search, setSearch] = useState(" ");
   const [fetchError, setFetchError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  console.log(items);
 
   // useEffect(() => {
   //   localStorage.setItem("shoppinglist", JSON.stringify(items));
@@ -55,6 +54,21 @@ function App() {
     const myNewItem = { id, checked: false, item };
     const listItems = [...items, myNewItem];
     setItems(listItems);
+
+    //update rest of the list
+    const postOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      //item that we add is new item
+      body: JSON.stringify(myNewItem),
+    };
+
+    //if there is result, if we added item, fetch error
+    //will be resut and not null
+    const result = await apiRequest(API_URL, postOptions);
+    if (result) setFetchError(result);
   };
 
   const handleCheck = async (id) => {
@@ -67,9 +81,22 @@ function App() {
           }
         : item
     );
-
     //set state
     setItems(listItems);
+
+    //get item that is checked
+    const myItem = listItems.filter((item) => item.id === id);
+    const updateOptions = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ checked: myItem[0].checked }),
+    };
+    console.log(myItem[0]);
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl, updateOptions);
+    if (result) setFetchError(result);
   };
 
   const handleDelete = (id) => {
